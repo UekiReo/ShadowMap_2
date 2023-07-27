@@ -6,9 +6,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/PostProcess.h"
 
-// Create an instance of the Importer class
 Assimp::Importer importer;
-// scale factor for the model to fit in the window
 
 void GetBoundingBox(const aiMesh* mesh, aiVector3D* min, aiVector3D* max)
 {
@@ -73,7 +71,6 @@ MeshData LoadMesh( const std::string& pFile)
 
    MeshData mesh;
 
-	//check if file exists
 	std::ifstream fin(pFile.c_str());
 	if(!fin.fail()) 
    {
@@ -86,16 +83,14 @@ MeshData LoadMesh( const std::string& pFile)
 		return mesh;
 	}
 
-	mesh.mScene = importer.ReadFile( pFile, aiProcessPreset_TargetRealtime_Quality);//|aiProcess_FlipWindingOrder);
+	mesh.mScene = importer.ReadFile( pFile, aiProcessPreset_TargetRealtime_Quality);
 
-	// If the import failed, report it
 	if( !mesh.mScene)
 	{
 		printf("%s\n", importer.GetErrorString());
 		return mesh;
 	}
 
-	// Now we can access the file's contents.
 	printf("Import of scene %s succeeded.", pFile.c_str());
 
 	GetBoundingBox(mesh.mScene, &mesh.mBbMin, &mesh.mBbMax);
@@ -138,7 +133,6 @@ void BufferIndexedVerts(MeshData& meshdata)
       glDeleteBuffers(1, &meshdata.mVboNormals);
    }
 
-   //shader attrib locations
    int pos_loc = -1;
    int tex_coord_loc = -1;
    int normal_loc = -1;
@@ -167,13 +161,11 @@ void BufferIndexedVerts(MeshData& meshdata)
 			faceIndex += 3;
 		}
 
-   //Buffer indices
    glGenBuffers(1, &meshdata.mIndexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshdata.mIndexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numFaces * 3, faceArray, GL_STATIC_DRAW);
    free(faceArray);
 
-	//Buffer vertices
    if (mesh->HasPositions()) {
 			glGenBuffers(1, &meshdata.mVboVerts);
 			glBindBuffer(GL_ARRAY_BUFFER, meshdata.mVboVerts);
@@ -182,7 +174,6 @@ void BufferIndexedVerts(MeshData& meshdata)
 			glVertexAttribPointer(pos_loc, 3, GL_FLOAT, 0, 0, 0);
 		}
 
-   // buffer for vertex texture coordinates
 		if (mesh->HasTextureCoords(0)) {
 			float *texCoords = (float *)malloc(sizeof(float)*2*mesh->mNumVertices);
 			for (unsigned int k = 0; k < mesh->mNumVertices; ++k) {

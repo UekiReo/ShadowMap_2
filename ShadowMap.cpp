@@ -23,14 +23,14 @@ GLuint shader_program = -1;
 
 GLuint quad_vao = -1;
 GLuint quad_vbo = -1;
-bool change = false;/////////////////////////////////////////////////////////////////////////
+bool change = false;
 float w_num = 1.5;
 bool enable = false;
 
-GLuint fbo_id = -1;       // framebuffer object,
+GLuint fbo_id = -1;   
 GLuint shadow_map_texture_id = -1;
 
-int shadow_map_size = 1024; //Lab: this is the size of the shadow map. Try making it bigger.
+int shadow_map_size = 1024; 
 
 int win_width = 1024;
 int win_height = 1024;
@@ -38,14 +38,9 @@ int win_height = 1024;
 static const std::string mesh_name = "Amago0.obj";
 MeshData mesh_data;
 
-//V_cam: position and orientation of camera
 glm::mat4 V_cam = glm::lookAt(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-//P_cam: field-of-view and near/far clip plane of camera
 glm::mat4 P_cam = glm::perspective(40.0f, 1.0f, 0.1f, 10.0f);
-
-//V_light: position and orientation of light
 glm::mat4 V_light = glm::lookAt(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-//P_light: field-of-view and near/far clip plane of light
 glm::mat4 P_light = glm::perspective(40.0f, 1.0f, 0.1f, 10.0f);
 
 glm::mat4 M_fish;
@@ -55,10 +50,8 @@ int render_mode = 1;
 
 bool check_framebuffer_status();
 
-//draw the scene using the specified view matrix
 void draw_scene(glm::mat4& V)
 {
-   //draw mesh
    int VM_loc = glGetUniformLocation(shader_program, "VM");
    if(VM_loc != -1)
    {
@@ -68,7 +61,6 @@ void draw_scene(glm::mat4& V)
    glBindVertexArray(mesh_data.mVao);
 	glDrawElements(GL_TRIANGLES, mesh_data.mNumIndices, GL_UNSIGNED_INT, 0);
 
-   //draw plane
    if(VM_loc != -1)
    {
       const glm::mat4 VM = V*M_quad;
@@ -78,7 +70,7 @@ void draw_scene(glm::mat4& V)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void draw_pass_1() //draw from light point-of-view
+void draw_pass_1() 
 {
    const int pass = 1;
 
@@ -95,7 +87,7 @@ void draw_pass_1() //draw from light point-of-view
    }
 
    glEnable(GL_POLYGON_OFFSET_FILL);
-   glPolygonOffset(50.0, 30.0); //No offset is being applied when params are 0.0, 0.0. Try changing these numbers to fix the shadow map "acne" problem
+   glPolygonOffset(50.0, 30.0); 
 
    draw_scene(V_light);
    glDisable(GL_POLYGON_OFFSET_FILL);
@@ -110,17 +102,17 @@ void draw_pass_2()
    {
       glUniform1i(pass_loc, pass);
    }
-   const int w_loc = glGetUniformLocation(shader_program, "w_num");//////////
+   const int w_loc = glGetUniformLocation(shader_program, "w_num");
    if (w_loc != -1)
    {
        glUniform1f(w_loc,w_num);
    }
-   const int change_loc = glGetUniformLocation(shader_program, "change");/////////////
+   const int change_loc = glGetUniformLocation(shader_program, "change");
    if (change_loc != -1)
    {
        glUniform1i(change_loc, change);
    }
-   const int enable_loc = glGetUniformLocation(shader_program, "enable");/////////////
+   const int enable_loc = glGetUniformLocation(shader_program, "enable");
    if (enable_loc != -1)
    {
        glUniform1i(enable_loc, enable);
@@ -131,7 +123,7 @@ void draw_pass_2()
    const int tex_loc = glGetUniformLocation(shader_program, "shadowmap");
    if(tex_loc != -1)
    {
-      glUniform1i(tex_loc, 0); // we bound our shadowmap to texture unit 0
+      glUniform1i(tex_loc, 0);
    }
 
    const int P_loc = glGetUniformLocation(shader_program, "P");
@@ -144,7 +136,7 @@ void draw_pass_2()
    const glm::mat4 S = glm::translate(glm::vec3(0.5f)) * glm::scale(glm::vec3(0.5f));
    if(Shadow_loc != -1)
    {
-      const glm::mat4 Shadow = S*P_light*V_light*glm::inverse(V_cam); //this matrix transforms camera-space coordinates to shadow map texture coordinates
+      const glm::mat4 Shadow = S*P_light*V_light*glm::inverse(V_cam); 
       glUniformMatrix4fv(Shadow_loc, 1, false, glm::value_ptr(Shadow));
    }
 
@@ -152,30 +144,27 @@ void draw_pass_2()
 }
 
 
-// glut display callback function.
-// This function gets called every time the scene gets redisplayed 
 void display()
 {
    glUseProgram(shader_program);
 
-   if(render_mode == 1) // draw scene with shadowmapping
+   if(render_mode == 1) 
    {
-      glBindFramebuffer(GL_FRAMEBUFFER, fbo_id); // render depth to shadowmap
+      glBindFramebuffer(GL_FRAMEBUFFER, fbo_id); 
       glDrawBuffer(GL_NONE);
       glViewport(0, 0, shadow_map_size, shadow_map_size); 
-      //glViewport(0, 0, shadow_map_size-8, shadow_map_size-8);  //*hack* (Why does this work?)
       glClear(GL_DEPTH_BUFFER_BIT);
-      draw_pass_1(); //Pass 1: render depth to texture from light point of view
+      draw_pass_1();
    
-      glBindFramebuffer(GL_FRAMEBUFFER, 0); // do not render to texture
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
       glDrawBuffer(GL_BACK);
       glViewport(0, 0, win_width, win_height);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-      draw_pass_2(); //Pass 2: render scene with shadowing
+      draw_pass_2();
    }
-   else if (render_mode == 2) // show shadow map for debugging
+   else if (render_mode == 2) 
    {
-      glBindFramebuffer(GL_FRAMEBUFFER, 0); // do not render to texture, render to back buffer
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
       glDrawBuffer(GL_BACK);
       glViewport(0, 0, shadow_map_size, shadow_map_size);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
@@ -200,7 +189,7 @@ void reload_shader()
 {
    GLuint new_shader = InitShader(vertex_shader.c_str(), fragment_shader.c_str());
 
-   if(new_shader == -1) // loading failed
+   if(new_shader == -1)
    {
       glClearColor(1.0f, 0.0f, 1.0f, 0.0f);
    }
@@ -229,7 +218,7 @@ void reshape(int w, int h)
    glViewport(0, 0, w, h);
 }
 
-void change_pass1() {//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void change_pass1() {
  
     if (change == false) {
         change = true;
@@ -238,10 +227,8 @@ void change_pass1() {///////////////////////////////////////////////////////////
         change = false;
     }
 }
-/*void change_pass2() {//////////////////////////////////////////////////////////////////////////////////////////////////////////
-    change = false;
-}*/
-void change_softness() {//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void change_softness() {
   
     if (w_num < 7) {
         w_num += 0.5;
@@ -249,7 +236,7 @@ void change_softness() {////////////////////////////////////////////////////////
     else
         w_num = 1.5;
 }
-void change_lit() {//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void change_lit() {
     if (enable == false) {
         enable = true;
     }
@@ -258,16 +245,12 @@ void change_lit() {/////////////////////////////////////////////////////////////
     }
 }
 
-// glut keyboard callback function.
-// This function gets called when an ASCII key is pressed
 void keyboard(unsigned char key, int x, int y)
 {
    std::cout << "key : " << key << ", x: " << x << ", y: " << y << std::endl;
 
    switch(key)
    {   
-     // case 'n':
-          //change_pass2();//change between 2x2 to 4x4
       case 'a':
       case 'A':
         change_softness();
@@ -278,7 +261,7 @@ void keyboard(unsigned char key, int x, int y)
           break;
       case 'm':
       case 'M':
-          change_pass1();//change between 4x4 to 2x2
+          change_pass1();
           break;
 
       case 'r':
@@ -320,7 +303,6 @@ void initOpenGl()
    mesh_data = LoadMesh(mesh_name);
    M_fish = glm::scale(glm::vec3(mesh_data.mScaleFactor));
 
-   //mesh for quadrilateral
    quad_vbo = -1;
 
    glGenVertexArrays(1, &quad_vao);
@@ -328,7 +310,6 @@ void initOpenGl()
 
    float vertices[] = {1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f};
 
-   //create vertex buffers for vertex coords
    glGenBuffers(1, &quad_vbo);
    glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -339,19 +320,15 @@ void initOpenGl()
 	   glVertexAttribPointer(pos_loc, 3, GL_FLOAT, false, 0, 0);
    }
 
-   //create shadow map texture to hold depth values (note: not a renderbuffer)
    glGenTextures(1, &shadow_map_texture_id);
    glBindTexture(GL_TEXTURE_2D, shadow_map_texture_id);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, shadow_map_size, shadow_map_size, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-   //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-   //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);///////////////
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);///////////////////
-   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );////////////////////
-   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );//////////////////////
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
    glBindTexture(GL_TEXTURE_2D, 0);   
 
-   //create the framebuffer object: only has a depth attachment
    glGenFramebuffers(1, &fbo_id);
    glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadow_map_texture_id, 0);
@@ -362,7 +339,6 @@ void initOpenGl()
 
 int main (int argc, char **argv)
 {
-   //Configure initial window state
    glutInit(&argc, argv); 
    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
    glutInitWindowPosition (5, 5);
@@ -371,7 +347,6 @@ int main (int argc, char **argv)
 
    printGlInfo();
 
-   //Register callback functions with glut. 
    glutDisplayFunc(display); 
    glutKeyboardFunc(keyboard);
    glutIdleFunc(idle);
@@ -379,7 +354,6 @@ int main (int argc, char **argv)
 
    initOpenGl();
 
-   //Enter the glut event loop.
    glutMainLoop();
    glutDestroyWindow(win);
    return 0;		

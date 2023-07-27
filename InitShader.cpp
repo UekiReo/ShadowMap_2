@@ -6,9 +6,6 @@
 #include <iostream>
 using namespace std;
 
-//Adapted from Edward Angels InitShader code
-
-// Create a NULL-terminated string by reading the provided file
 static char* readShaderSource(const char* shaderFile)
 {
    ifstream ifs(shaderFile, ios::in | ios::binary | ios::ate);
@@ -89,7 +86,6 @@ GLuint InitShader(const char* computeShaderFile)
       glAttachShader( program, shader );
    }
 
-   /* link  and error check */
    glLinkProgram(program);
 
    GLint  linked;
@@ -107,14 +103,11 @@ GLuint InitShader(const char* computeShaderFile)
       return -1;
    }
 
-   /* use program object */
    glUseProgram(program);
 
    return program;
 }
 
-
-// Create a GLSL program object from vertex and fragment shader files
 GLuint InitShader(const char* vShaderFile, const char* fShaderFile)
 {
 
@@ -160,7 +153,6 @@ GLuint InitShader(const char* vShaderFile, const char* fShaderFile)
       glAttachShader( program, shader );
    }
 
-   /* link  and error check */
    glLinkProgram(program);
 
    GLint  linked;
@@ -178,12 +170,10 @@ GLuint InitShader(const char* vShaderFile, const char* fShaderFile)
       return -1;
    }
 
-   /* use program object */
    glUseProgram(program);
    return program;
 }
 
-// Create a GLSL program object from vertex and fragment shader files
 GLuint InitShader(const char* vShaderFile, const char* gShaderFile, const char* fShaderFile)
 {
    bool error = false;
@@ -229,7 +219,6 @@ GLuint InitShader(const char* vShaderFile, const char* gShaderFile, const char* 
       glAttachShader( program, shader );
    }
 
-   /* link  and error check */
    glLinkProgram(program);
 
    GLint  linked;
@@ -247,7 +236,6 @@ GLuint InitShader(const char* vShaderFile, const char* gShaderFile, const char* 
       return -1;
    }
 
-   /* use program object */
    glUseProgram(program);
 
    return program;

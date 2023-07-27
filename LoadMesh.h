@@ -13,7 +13,7 @@ struct MeshData
    unsigned int mVboNormals;
    unsigned int mVboTexCoords;
    unsigned int mIndexBuffer;
-   float mScaleFactor; //TODO replace with bounding box
+   float mScaleFactor; 
    unsigned int mNumIndices;
    const aiScene* mScene;
    aiVector3D mBbMin, mBbMax;

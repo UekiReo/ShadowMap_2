@@ -2,7 +2,6 @@
 uniform mat4 P;           
 uniform mat4 VM;
 uniform mat4 Shadow;
-
 in vec3 pos_attrib;
 in vec2 tex_coord_attrib;
 in vec3 normal_attrib;
