@@ -179,10 +179,7 @@ void idle()
 	glutPostRedisplay();
 
    const int time_ms = glutGet(GLUT_ELAPSED_TIME);
-   float time_sec = 0.001f*time_ms;
-
-   M_fish = glm::rotate(15.0f*time_sec, glm::vec3(1.0f, 0.0f, 0.0f))*glm::scale(glm::vec3(mesh_data.mScaleFactor));
-   
+   float time_sec = 0.001f*time_ms;   
 }
 
 void reload_shader()
