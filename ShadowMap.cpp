@@ -39,12 +39,12 @@ static const std::string mesh_name = "Amago0.obj";
 MeshData mesh_data;
 
 glm::mat4 V_cam = glm::lookAt(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-glm::mat4 P_cam = glm::perspective(60.0f, 1.0f, 0.1f, 30.0f);
+glm::mat4 P_cam = glm::perspective(100.0f, 1.0f, 0.1f, 30.0f);
 //glm::mat4 V_light = glm::lookAt(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 //glm::mat4 P_light = glm::perspective(60.0f, 1.0f, 0.1f, 30.0f);
 
 glm::mat4 M_fish;
-glm::mat4 M_quad = glm::translate(glm::vec3(0.0f, -0.8f, 0.0f))*glm::rotate(-45.0f, glm::vec3(1.0f, 0.0f, 0.0f))*glm::scale(glm::vec3(0.75f));
+glm::mat4 M_quad = glm::translate(glm::vec3(0.0f, -0.8f, 0.0f))*glm::rotate(-20.0f, glm::vec3(0.0f, 0.0f, 0.0f))*glm::scale(glm::vec3(2.0f));
 
 int render_mode = 1;
 
